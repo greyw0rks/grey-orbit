@@ -35,26 +35,29 @@ async function qwenChat({ system, user, maxTokens = 2048 }: ChatRequest): Promis
 
   if (!apiKey) throw new Error('QWEN_API_KEY or DASHSCOPE_API_KEY is not set')
 
-  const res = await fetch(`${baseURL}/chat/completions`, {
+  // Qwen's Anthropic-compatible endpoint uses /v1/messages, not /chat/completions
+  const res = await fetch(`${baseURL}/v1/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
       model,
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
       max_tokens: maxTokens,
-      temperature: 0,
+      system,
+      messages: [{ role: 'user', content: user }],
     }),
   })
 
-  if (!res.ok) throw new Error(`Qwen API failed: ${res.status}`)
-  const data = await res.json() as { choices?: Array<{ message?: { content?: string } }> }
-  return data.choices?.[0]?.message?.content || ''
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => 'Unknown error')
+    throw new Error(`Qwen API failed: ${res.status} - ${errorText}`)
+  }
+
+  const data = await res.json() as { content?: Array<{ type: string; text?: string }> }
+  return data.content?.[0]?.type === 'text' ? data.content[0].text || '' : ''
 }
 
 // --- Anthropic-compatible ----------------------------------------------------
