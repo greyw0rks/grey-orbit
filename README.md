@@ -4,7 +4,7 @@
 
 Grey Orbit is an AI-powered orbital collision avoidance system for satellite operators. It uses real-time TLE data from Celestrak, SGP4 propagation to compute close approaches, and **IBM watsonx.ai (Granite)** to generate plain-language operator briefings that recommend maneuver options.
 
-**Demo:** [Live deployment URL to be added]
+**Demo:** https://grey-orbit.vercel.app
 
 ---
 

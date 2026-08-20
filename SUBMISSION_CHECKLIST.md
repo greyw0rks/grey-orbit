@@ -31,6 +31,10 @@
   - Repo created: https://github.com/greyw0rks/grey-orbit
   - All code pushed and accessible
 
+- [x] **Live deployment**
+  - **URL: https://grey-orbit.vercel.app**
+  - Fully functional, ready to demo
+
 - [x] **IBM-compliant README**
   - Problem statement ✓
   - Solution description ✓
