@@ -40,7 +40,7 @@ The AI advises; the operator still makes the final call. **Human-in-the-loop by 
 
 ## AI Approach and Architecture
 
-**Model:** Pluggable via a provider adapter (`lib/ai.ts`). Set `AI_PROVIDER=watsonx` to use **IBM watsonx.ai (Granite 3 8B Instruct)**, or leave default `anthropic` for a Claude-compatible API.
+**Model:** Pluggable via a provider adapter (`lib/ai.ts`). Current deployment uses **Alibaba Qwen (qwen3.7-max)** via DashScope. Also supports `AI_PROVIDER=watsonx` for **IBM watsonx.ai (Granite 3 8B Instruct)**, or `AI_PROVIDER=anthropic` for Claude-compatible APIs.
 
 **Architecture:**
 
@@ -51,7 +51,7 @@ TLE fetch (Celestrak)  →  SGP4 propagation (satellite.js)  →  conjunctions.j
                                                GET /api/briefing  ← load conjunctions.json
                                                     │  feed top 5 events to AI
                                                     ▼
-                          IBM watsonx.ai (Granite) / Claude  →  operator briefing (plain text)
+                  Qwen / IBM watsonx.ai / Claude  →  { verdict, confidence, reasoning, flags }
                                                     │
                                                     ▼
                                           Next.js frontend  →  risk badge + briefing + 3D viz
@@ -109,6 +109,7 @@ npm run fetch
 PRIMARY="IRIDIUM 106" WINDOW_HOURS=72 SCREEN_KM=25 npm run screen
 
 # 3. Configure AI provider in .env.local (copy from .env.example)
+#    Current deployment uses: AI_PROVIDER=qwen + QWEN_API_KEY + QWEN_BASE_URL
 #    For watsonx: AI_PROVIDER=watsonx + WATSONX_API_KEY + WATSONX_PROJECT_ID
 #    For Claude: ANTHROPIC_API_KEY (AI_PROVIDER defaults to anthropic)
 
@@ -140,7 +141,7 @@ Open http://localhost:3000. The app will auto-fetch the AI briefing and display:
 
 5. **Technical credibility (2:20–2:40):** "This is real SGP4 propagation from live Celestrak TLEs. The numbers are grounded — no invented collision probabilities. AI provides decision support; the operator still commands the maneuver."
 
-6. **Close (2:40–3:00):** "Built with IBM watsonx.ai (Granite) and IBM Bob. Grey Orbit: AI-powered collision avoidance for the most congested environment humans have ever operated in. Repo: github.com/greyw0rks/grey-orbit."
+5. **Close (2:40–3:00):** "Built with Alibaba Qwen AI (also supports IBM watsonx.ai) and IBM Bob. Grey Orbit: AI-powered collision avoidance for the most congested environment humans have ever operated in. Repo: github.com/greyw0rks/grey-orbit."
 
 ---
 
