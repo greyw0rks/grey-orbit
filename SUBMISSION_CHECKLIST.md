@@ -69,12 +69,16 @@
 **Script:** See README.md "Demo Script" section  
 
 **Suggested structure:**
-- 0:00-0:20: Hook - congestion problem, Grey Orbit solution
-- 0:20-0:40: Terminal demo - show `npm run fetch && npm run screen`, highlight output
-- 0:40-2:00: Web app - walk through risk badge, AI briefing, recommendations, debris context
-- 2:00-2:20: Orbital visualization - show primary, debris, close approaches
+- 0:00-0:20: Hook - congestion problem, Grey Orbit solution, **show live site: https://grey-orbit.vercel.app**
+- 0:20-0:40: Navigate through the live app - show risk badge, briefing, visualization
+- 0:40-2:00: Walk through AI briefing details:
+  - CRITICAL/HIGH risk assessment
+  - AI explanation: "Primary asset IRIDIUM 106 faces high conjunction risk from Cosmos-2251 debris..."
+  - Maneuver recommendations
+  - Debris context: "2009 Iridium-Cosmos collision debris cloud"
+- 2:00-2:20: Show orbital visualization - primary (green), debris field (gray), close approaches (red circles)
 - 2:20-2:40: Technical credibility - real SGP4, grounded data, human-in-the-loop
-- 2:40-3:00: Close - IBM watsonx + Bob, repo URL
+- 2:40-3:00: Close - IBM watsonx + Bob, repo URL, **live site: grey-orbit.vercel.app**
 
 **Recording tips:**
 - Use screen recording software (OBS, Loom, QuickTime)
@@ -123,17 +127,11 @@ Currently the app works with both watsonx and Anthropic, but you should test the
 
 ---
 
-### Deploy to Vercel (optional but impressive)
+### Deploy to Vercel ~~(optional but impressive)~~
 
-**Action:**
-1. Push repo to GitHub (already done ✓)
-2. Sign up at vercel.com, connect GitHub
-3. Import the grey-orbit repo
-4. Add environment variables (AI_PROVIDER, WATSONX_API_KEY, etc.)
-5. Deploy
-6. Update README.md with live URL
+**✅ DONE - Live at https://grey-orbit.vercel.app**
 
-**Time estimate:** 15 minutes
+The app is deployed and fully functional. Use this URL in your demo video!
 
 ---
 
