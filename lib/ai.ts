@@ -1,6 +1,7 @@
 // Provider-agnostic chat for Grey Orbit's AI briefing.
 //
 //   AI_PROVIDER=watsonx  → IBM watsonx.ai (Granite models)
+//   AI_PROVIDER=qwen     → Alibaba Qwen via DashScope (Anthropic-compatible endpoint)
 //   AI_PROVIDER=anthropic (default) → Anthropic-compatible messages API
 //
 // Ported from grey/apps/web/lib/ai.ts
@@ -11,12 +12,49 @@ export interface ChatRequest {
   maxTokens?: number
 }
 
-export function aiProvider(): 'watsonx' | 'anthropic' {
-  return process.env.AI_PROVIDER === 'watsonx' ? 'watsonx' : 'anthropic'
+export function aiProvider(): 'watsonx' | 'qwen' | 'anthropic' {
+  const provider = process.env.AI_PROVIDER
+  if (provider === 'watsonx') return 'watsonx'
+  if (provider === 'qwen') return 'qwen'
+  return 'anthropic'
 }
 
 export async function chatText(req: ChatRequest): Promise<string> {
-  return aiProvider() === 'watsonx' ? watsonxChat(req) : anthropicChat(req)
+  const provider = aiProvider()
+  if (provider === 'watsonx') return watsonxChat(req)
+  if (provider === 'qwen') return qwenChat(req)
+  return anthropicChat(req)
+}
+
+// --- Qwen / DashScope (Anthropic-compatible) --------------------------------
+
+async function qwenChat({ system, user, maxTokens = 2048 }: ChatRequest): Promise<string> {
+  const apiKey = process.env.QWEN_API_KEY || process.env.DASHSCOPE_API_KEY
+  const baseURL = process.env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1'
+  const model = process.env.QWEN_MODEL || 'qwen-plus'
+
+  if (!apiKey) throw new Error('QWEN_API_KEY or DASHSCOPE_API_KEY is not set')
+
+  const res = await fetch(`${baseURL}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+      max_tokens: maxTokens,
+      temperature: 0,
+    }),
+  })
+
+  if (!res.ok) throw new Error(`Qwen API failed: ${res.status}`)
+  const data = await res.json() as { choices?: Array<{ message?: { content?: string } }> }
+  return data.choices?.[0]?.message?.content || ''
 }
 
 // --- Anthropic-compatible ----------------------------------------------------
